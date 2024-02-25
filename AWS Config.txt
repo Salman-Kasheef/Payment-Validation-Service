@@ -1,0 +1,78 @@
+AWS url:
+aws.amazon.com/console/
+Region
+
+1) Purchase an EC2 machine in AWS.
+	Search EC2, & launch the EC2 Dashboard
+2) Goto instances.
+3) launch instances
+4) OS: Amazon Linux 2 - free tire machine.
+5) Instance Type: 1 CPU - 1GB
+	We need to take code from local machine & deploy it on AWS.
+	Connect with EC2 machine.
+	Copy this payment-validation-service to ES2.
+	to restart the service
+6) Key pair, is to securely connect to EC2.
+	Create a new Key pair
+	RSA, .pem
+	D:\MyData\CT\AWS\janct-key-pair.pem (Download)
+7) Network setting => Edit:
+	VPC, Subnets
+	default VPC
+	subnet: ap-south-1a
+	
+	Need public IP.
+
+	Security Group ===> EC2
+		Allows IP & port configuration
+		which IP is allowed to acces which port of this EC2 machine.
+
+	ssh, port:22
+	scp port:22
+
+8) Continue with default - 1 instance.
+9) Click "Launch instance"
+
+machineIP : Port
+http://localhost:port/fdasaf/asfdisa
+
+-------------------------------------------------------------------------------------
+
+ AWS deployment & testing.
+	1. Build .jar file for deploying on AWS
+		mvn clean package -P dev
+
+		application-local.properties
+
+		application-dev.properties
+
+
+	2. Deploying on AWS.
+		*** Connect to AWS machine.
+	(location of pem file in windows)      (Machine name & Ip)
+--ssh -i D:\\MyData\\CT\\AWS\\janct-key-pair.pem ec2-user@13.233.216.97
+
+		1. What is machine ip. Is the machine up & running in AWS.
+		2. Mobasxterm ssh into AWS machine.
+			security key
+			22 port
+		
+		*** check whether payment-validation-service is up & running.
+			ps -ef | grep java
+
+		*** Deploy the locally generated jar file, into aws machine.
+			1. in mobaxterm, go to that path where jar is located
+			2. scp
+		(security file)				(source file) (.jar)		
+--scp -i D:\\MyData\\CT\\AWS\\janct-key-pair.pem ./payment-validation-service.jar ec2-user@13.233.216.97:/home/ec2-user
+(destination file)
+
+		*** start this service
+			nohup java -jar 
+		   (memory alocated)		(jar name)	     (otp in this)	
+--nohup java -jar -Xms100M -Xmx150M payment-validation-service.jar > p-validation-service.log &
+
+		*** check whether the service is up & running
+			- verify startup logs.
+			ps -ef | grep java
+
